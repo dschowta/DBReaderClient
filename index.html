@@ -1,0 +1,56 @@
+<!doctype html>
+<html ng-app="myApp">
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+    <script src="js/main.js"></script>	
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+<!--<script type="text/javascript" src="http://jqueryui.com/latest/ui/ui.tabs.js"></script> -->
+<link rel="stylesheet" type="text/css" href="css/styleTab.css">
+  </head>
+  <body>
+
+
+
+<div class="ui-tabs">
+	<ul class="ui-tabs-nav">
+		<li><a href="#tabs-1">Tab One</a></li>
+		<li><a href="#tabs-2">CQL</a></li>
+		<li><a href="#tabs-3">Tab Three</a></li>
+	</ul>
+	<div id="tabs-1" class="ui-tabs-panel">
+		    <div ng-controller="MyController">
+{{person.name}}
+<form ng-submit="connectToDB()">
+    <button type="submit">Connect</button><br>
+</form>
+<form ng-submit="sendPost()">
+    <button type="submit">Get Keyspaces</button><br>
+</form>
+
+<form ng-submit="createSchema()">
+    <input ng-model="scehmaName">
+    <button type="submit">createSchema</button><br>
+</form>
+    </div>
+	</div>
+	<div id="tabs-2" class="ui-tabs-panel">
+		<form>
+		Enter Query:<br>
+		<input type="text" name="query">
+		<br>
+		<button type="submit">Submit Query</button>
+		</form>
+	</div>
+	<div id="tabs-3" class="ui-tabs-panel">
+		<p>Content three.</p>
+	</div>
+</div>
+  </body>
+</html>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$(".ui-tabs").tabs();
+	});
+</script>
