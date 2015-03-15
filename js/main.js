@@ -6,6 +6,7 @@ app.controller('MyController',['$scope','$http', function($scope,$http) {
   $scope.person = {
     name: "Try It"
   };
+  $scope.queryString = "";
 $scope.sendPost = function() {
 var dataToPost = {query:"SELECT keyspace_name FROM system.schema_keyspaces;"}; /* PostData*/
     //var queryParams = {params: {op: 'saveEmployee'}};/* Query Parameters*/
@@ -46,6 +47,7 @@ var dataToPost = {query:"SELECT columnfamily_name FROM system.schema_columnfamil
             });
 }
 
+
 $scope.deleteKeyspace = function() {
 var dataToPost = {query:"DROP KEYSPACE "+ $scope.DropKeyspace +";"}; /* PostData*/
     $http.post("http://localhost:9000/deleteKeyspace", dataToPost)
@@ -54,4 +56,20 @@ var dataToPost = {query:"DROP KEYSPACE "+ $scope.DropKeyspace +";"}; /* PostData
                 $scope.deleted = serverResponse;
             });
 }
+
+
+$scope.sendQuery = function() {
+	var dataToPost = {query:$scope.queryString +";"}; /* PostData*/
+	    $http.post("http://localhost:9000/getDataFromCassandra", dataToPost)
+	            .success(function(serverResponse, status) {
+	                // Updating the $scope postresponse variable to update theview
+	                $scope.answerRows = serverResponse;
+	            });
+}
+
 }]);
+/*
+app.controller('CQLQueryController',['$scope','$http', function($scope,$http) {
+
+}]);*/
+
