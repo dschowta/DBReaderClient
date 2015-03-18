@@ -91,6 +91,22 @@ $scope.getTableData = function(tablename) {
                 $scope.keyspacedata.tabledata = serverResponse;
             });
 }
+
+$scope.dropTable = function(index,tablename) {
+	$scope.keyspacedata.Table = tablename;
+	$scope.query ="http://127.0.0.1:9000/keyspace/"+$scope.keyspacedata.name+"/table/" + tablename;
+    $http.delete("http://127.0.0.1:9000/keyspace/"+$scope.keyspacedata.name+"/table/" + tablename)
+            .success(function(serverResponse, status) {
+                // Updating the $scope postresponse variable to update theview
+		$scope.response=serverResponse;
+		$scope.getKeyspaceSchema($scope.keyspacedata.name);
+            }).error(function(serverResponse, status) {
+    // called asynchronously if an error occurs
+    // or server returns response with an error status.
+	$scope.error = serverResponse;
+  });
+}
+
 $scope.sendQuery = function() {
 	var dataToPost = {query:$scope.queryString +";"}; /* PostData*/
 	    $http.post("http://localhost:9000/getDataFromCassandra", dataToPost)

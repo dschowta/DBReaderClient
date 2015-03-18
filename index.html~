@@ -24,6 +24,7 @@
 			<div id="tabs-1" class="ui-tabs-panel">
 				<div>
 					{{person.name}}
+					{{error}}
 					<form ng-submit="connectToDB()">
 						<button type="submit">Connect</button>
 					</form>
@@ -51,13 +52,18 @@
 								<a href="javascript:void(0);"
 									ng-click="getTableData(columnfamily.columnfamily_name);">TableData</a>
 								</td>
+								<td> 
+								<a href="javascript:void(0);"
+									ng-click="dropTable($index,columnfamily.columnfamily_name);"><img src="images/delete.jpg" title="Delete"/></a>
+								<td>
 								</tr>
 							</table>
 						</tr>
+
 						<tr>
 							<div ng-show="keyspacedata.metadata.length">
 								Table MetaData of {{keyspacedata.name}}.{{keyspacedata.Table}}
-								<table ng-show="keyspacedata.metadata.length">
+								<table ng-show="keyspacedata.metadata.length" border="1">
 									<tr>
 										<th ng-repeat="(header, value) in keyspacedata.metadata[0]">
 				      							{{header}}
@@ -72,7 +78,7 @@
 					</table>
 					<div ng-show="keyspacedata.tabledata.length">
 						Table contents of {{keyspacedata.name}}.{{keyspacedata.Table}}
-						<table ng-show="keyspacedata.tabledata.length">
+						<table ng-show="keyspacedata.tabledata.length" border="1">
 							<tr >
 								<th ng-repeat="(header, value) in keyspacedata.tabledata[0]">
       								{{header}}
@@ -93,7 +99,7 @@
 								<td>Class:</td>
 								<td><select name="class">
 										<option name="SimpleStrategy">SimpleStrategy</option>
-										<option name="Stratagy">Another Strategy</option>
+										<option name="NetworkTopologyStrategy">Network Topology Strategy</option>
 								</select><br></td>
 							</tr>
 							<tr>

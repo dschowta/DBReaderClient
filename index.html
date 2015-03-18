@@ -24,6 +24,7 @@
 			<div id="tabs-1" class="ui-tabs-panel">
 				<div>
 					{{person.name}}
+					{{error}}
 					<form ng-submit="connectToDB()">
 						<button type="submit">Connect</button>
 					</form>
@@ -51,9 +52,14 @@
 								<a href="javascript:void(0);"
 									ng-click="getTableData(columnfamily.columnfamily_name);">TableData</a>
 								</td>
+								<td> 
+								<a href="javascript:void(0);"
+									ng-click="dropTable($index,columnfamily.columnfamily_name);"><img src="images/delete.png" title="Delete"/></a>
+								<td>
 								</tr>
 							</table>
 						</tr>
+
 						<tr>
 							<div ng-show="keyspacedata.metadata.length">
 								Table MetaData of {{keyspacedata.name}}.{{keyspacedata.Table}}
@@ -93,7 +99,7 @@
 								<td>Class:</td>
 								<td><select name="class">
 										<option name="SimpleStrategy">SimpleStrategy</option>
-										<option name="Stratagy">Another Strategy</option>
+										<option name="NetworkTopologyStrategy">Network Topology Strategy</option>
 								</select><br></td>
 							</tr>
 							<tr>

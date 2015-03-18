@@ -7,6 +7,14 @@ app.controller('MyController',['$scope','$http', function($scope,$http) {
     name: "Try It"
   };
   $scope.queryString = "";
+  $scope.keyspacedata ={
+	name:"",
+	Table:"",
+	column:"",
+	row:"",
+	metadata:"",
+	tabledata:""
+};
 $scope.sendPost = function() {
 var dataToPost = {query:"SELECT keyspace_name FROM system.schema_keyspaces;"}; /* PostData*/
     //var queryParams = {params: {op: 'saveEmployee'}};/* Query Parameters*/
@@ -39,14 +47,17 @@ var dataToPost = {query:"CREATE KEYSPACE " + $scope.scehmaName +" WITH REPLICATI
 }
 
 $scope.getKeyspaceSchema = function(keySpace) {
-var dataToPost = {query:"SELECT columnfamily_name FROM system.schema_columnfamilies WHERE keyspace_name = '"+keySpace+"';"}; /* PostData*/
+	$scope.keyspacedata.name = keySpace;
+	$scope.keyspacedata.Table ="";
+	$scope.keyspacedata.metadata = "";
+var dataToPost = {query:"SELECT columnfamily_name FROM system.schema_columnfamilies WHERE keyspace_name = '"+$scope.keyspacedata.name+"';"}; /* PostData*/
     $http.post("http://localhost:9000/getTableSchema", dataToPost)
             .success(function(serverResponse, status) {
                 // Updating the $scope postresponse variable to update theview
                 $scope.columnfamilynames = serverResponse;
+
             });
 }
-
 
 $scope.deleteKeyspace = function() {
 var dataToPost = {query:"DROP KEYSPACE "+ $scope.DropKeyspace +";"}; /* PostData*/
@@ -57,6 +68,44 @@ var dataToPost = {query:"DROP KEYSPACE "+ $scope.DropKeyspace +";"}; /* PostData
             });
 }
 
+$scope.tableMetaData = function(tablename) {
+	$scope.keyspacedata.Table = tablename;
+	$scope.keyspacedata.metadata = "";
+	$scope.keyspacedata.tabledata = "";
+    $http.get("http://127.0.0.1:9000/keyspace/"+$scope.keyspacedata.name+"/table/" + tablename)
+            .success(function(serverResponse, status) {
+                // Updating the $scope postresponse variable to update theview
+                $scope.keyspacedata.metadata = serverResponse;
+            });
+}
+
+$scope.getTableData = function(tablename) {
+	$scope.keyspacedata.Table = tablename;
+	$scope.keyspacedata.tabledata = "";
+	$scope.keyspacedata.metadata = "";
+	$scope.query ="http://127.0.0.1:9000/keyspace/"+$scope.keyspacedata.name+"/table/" + tablename+"/row";
+    $http.get("http://127.0.0.1:9000/keyspace/"+$scope.keyspacedata.name+"/table/" + tablename+"/row")
+            .success(function(serverResponse, status) {
+                // Updating the $scope postresponse variable to update theview
+		$scope.temp=serverResponse;
+                $scope.keyspacedata.tabledata = serverResponse;
+            });
+}
+
+$scope.dropTable = function(index,tablename) {
+	$scope.keyspacedata.Table = tablename;
+	$scope.query ="http://127.0.0.1:9000/keyspace/"+$scope.keyspacedata.name+"/table/" + tablename;
+    $http.delete("http://127.0.0.1:9000/keyspace/"+$scope.keyspacedata.name+"/table/" + tablename)
+            .success(function(serverResponse, status) {
+                // Updating the $scope postresponse variable to update theview
+		$scope.response=serverResponse;
+		getKeyspaceSchema($scope.keyspacedata.name);
+            }).error(function(serverResponse, status) {
+    // called asynchronously if an error occurs
+    // or server returns response with an error status.
+	$scope.error = serverResponse;
+  });
+}
 
 $scope.sendQuery = function() {
 	var dataToPost = {query:$scope.queryString +";"}; /* PostData*/
@@ -68,8 +117,5 @@ $scope.sendQuery = function() {
 }
 
 }]);
-/*
-app.controller('CQLQueryController',['$scope','$http', function($scope,$http) {
 
-}]);*/
 
