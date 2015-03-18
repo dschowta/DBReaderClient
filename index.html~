@@ -31,23 +31,28 @@
 						<button type="submit">Get Keyspaces</button>
 						<br>
 					</form>
-					<table ng-show="keyspaces.length">
+					<table>
 						<tr >
 							Keyspaces:<br>
 							<div ng-repeat="keyspace in keyspaces">
 								<a href="javascript:void(0);"
 								ng-click="getKeyspaceSchema(keyspace.keyspace_name);">{{keyspace.keyspace_name}}</a>
-								<!--<input type="radio" name="keyspace" value=keyspace.keyspace_name>{{keyspace.keyspace_name}}-->
 							</div>
 						</tr>
-						<tr ng-show="columnfamilynames.length" >
+						<tr>
 							Tables in {{keyspacedata.name}}:<br>
-							<div ng-repeat="columnfamily in columnfamilynames">
-								{{columnfamily.columnfamily_name}}<a href="javascript:void(0);"
+							<table ng-repeat="columnfamily in columnfamilynames">
+								<tr>
+								 <td>{{columnfamily.columnfamily_name}}</td>
+								<td><a href="javascript:void(0);"
 									ng-click="tableMetaData(columnfamily.columnfamily_name);">Metadata</a>
+								</td>
+								<td>
 								<a href="javascript:void(0);"
 									ng-click="getTableData(columnfamily.columnfamily_name);">TableData</a>
-							</div>
+								</td>
+								</tr>
+							</table>
 						</tr>
 						<tr>
 							<div ng-show="keyspacedata.metadata.length">

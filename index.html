@@ -37,22 +37,27 @@
 							<div ng-repeat="keyspace in keyspaces">
 								<a href="javascript:void(0);"
 								ng-click="getKeyspaceSchema(keyspace.keyspace_name);">{{keyspace.keyspace_name}}</a>
-								<!--<input type="radio" name="keyspace" value=keyspace.keyspace_name>{{keyspace.keyspace_name}}-->
 							</div>
 						</tr>
 						<tr>
 							Tables in {{keyspacedata.name}}:<br>
-							<div ng-repeat="columnfamily in columnfamilynames">
-								{{columnfamily.columnfamily_name}}<a href="javascript:void(0);"
+							<table ng-repeat="columnfamily in columnfamilynames">
+								<tr>
+								 <td>{{columnfamily.columnfamily_name}}</td>
+								<td><a href="javascript:void(0);"
 									ng-click="tableMetaData(columnfamily.columnfamily_name);">Metadata</a>
+								</td>
+								<td>
 								<a href="javascript:void(0);"
 									ng-click="getTableData(columnfamily.columnfamily_name);">TableData</a>
-							</div>
+								</td>
+								</tr>
+							</table>
 						</tr>
 						<tr>
 							<div ng-show="keyspacedata.metadata.length">
 								Table MetaData of {{keyspacedata.name}}.{{keyspacedata.Table}}
-								<table ng-show="keyspacedata.metadata.length">
+								<table ng-show="keyspacedata.metadata.length" border="1">
 									<tr>
 										<th ng-repeat="(header, value) in keyspacedata.metadata[0]">
 				      							{{header}}
@@ -67,7 +72,7 @@
 					</table>
 					<div ng-show="keyspacedata.tabledata.length">
 						Table contents of {{keyspacedata.name}}.{{keyspacedata.Table}}
-						<table ng-show="keyspacedata.tabledata.length">
+						<table ng-show="keyspacedata.tabledata.length" border="1">
 							<tr >
 								<th ng-repeat="(header, value) in keyspacedata.tabledata[0]">
       								{{header}}
