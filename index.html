@@ -32,12 +32,11 @@
 						<br>
 					</form>
 					<table>
-						<tr>
-							Keyspaces:
-							<br>
+						<tr >
+							Keyspaces:<br>
 							<div ng-repeat="keyspace in keyspaces">
 								<a href="javascript:void(0);"
-									ng-click="getKeyspaceSchema(keyspace.keyspace_name);">{{keyspace.keyspace_name}}</a>
+								ng-click="getKeyspaceSchema(keyspace.keyspace_name);">{{keyspace.keyspace_name}}</a>
 								<!--<input type="radio" name="keyspace" value=keyspace.keyspace_name>{{keyspace.keyspace_name}}-->
 							</div>
 						</tr>
@@ -54,25 +53,13 @@
 							<div ng-show="keyspacedata.metadata.length">
 								Table MetaData of {{keyspacedata.name}}.{{keyspacedata.Table}}
 								<table ng-show="keyspacedata.metadata.length">
-									<thead>
-										<tr>
-											<td>column name</td>
-											<td>component index</td>
-											<td>index name</td>
-											<td>index options</td>
-											<td>index type</td>
-											<td>metadata type</td>
-											<td>metadata validator</td>
-										</tr>
-									</thead>
+									<tr>
+										<th ng-repeat="(header, value) in keyspacedata.metadata[0]">
+				      							{{header}}
+				 						</th>
+									</tr>
 									<tr ng-repeat="metadata in keyspacedata.metadata">
-										<td>{{metadata.column_name}}</td>
-										<td>{{metadata.component_index}}</td>
-										<td>{{metadata.index_name}}</td>
-										<td>{{metadata.index_options}}</td>
-										<td>{{metadata.index_type}}</td>
-										<td>{{metadata.type}}</td>
-										<td>{{metadata.validator}}</td>
+										<td ng-repeat="(key, val) in metadata">{{val}}</td>
 									</tr>
 								</table>
 							</div>
@@ -80,8 +67,16 @@
 					</table>
 					<div ng-show="keyspacedata.tabledata.length">
 						Table contents of {{keyspacedata.name}}.{{keyspacedata.Table}}
-						<div ng-repeat="tablerow in keyspacedata.tabledata">
-							{{tablerow}}</div>
+						<table ng-show="keyspacedata.tabledata.length">
+							<tr >
+								<th ng-repeat="(header, value) in keyspacedata.tabledata[0]">
+      								{{header}}
+ 								</th>
+							</tr>
+							<tr ng-repeat="data in keyspacedata.tabledata">
+		 						<td ng-repeat="(key, val) in data">{{val}}</td>
+							</tr>
+						</table>
 					</div>
 					<form ng-submit="createSchema()">
 						<table>
