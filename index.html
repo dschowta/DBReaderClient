@@ -1,119 +1,143 @@
 <!doctype html>
 <html ng-app="myApp">
-  <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
-    <script src="js/main.js"></script>	
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+<head>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+<script src="js/main.js"></script>
+<script type="text/javascript"
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<script type="text/javascript"
+	src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
 <link rel="stylesheet" type="text/css" href="css/styleTab.css">
-  </head>
-  <body>
+</head>
+<body>
 
 
 
-<div class="ui-tabs">
-	<ul class="ui-tabs-nav">
-		<li><a href="#tabs-1">Tab One</a></li>
-		<li><a href="#tabs-2">CQL</a></li>
-		<li><a href="#tabs-3">Tab Three</a></li>
-	</ul>
-	<div ng-controller="MyController">
-	<div id="tabs-1" class="ui-tabs-panel">
-		    <div>
-{{person.name}}
-<form ng-submit="connectToDB()">
-    <button type="submit">Connect</button>
-</form>
-<form ng-submit="sendPost()">
-    <button type="submit">Get Keyspaces</button><br>
-</form>
-<table>
-<tr>
-Keyspaces:<br>
-<div ng-repeat="keyspace in keyspaces">
-<a href="javascript:void(0);" ng-click="getKeyspaceSchema(keyspace.keyspace_name);">{{keyspace.keyspace_name}}</a> 
-<!--<input type="radio" name="keyspace" value=keyspace.keyspace_name>{{keyspace.keyspace_name}}-->
-</div>
-</tr>
-<tr>
-Tables in {{keyspacedata.name}}:<br>
-<div ng-repeat="columnfamily in columnfamilynames">
-{{columnfamily.columnfamily_name}}<a href="javascript:void(0);" ng-click="tableMetaData(columnfamily.columnfamily_name);">Metadata</a>
-<a href="javascript:void(0);" ng-click="getTableData(columnfamily.columnfamily_name);">TableData</a>
-</div>
-</tr>
-<tr>
-Table MetaData of {{keyspacedata.name}}.{{keyspacedata.Table}}<br>
-<table>
-<tr ng-repeat="metadata in keyspacedata.metadata">
-<td>{{metadata.keyspace_name}}</td>
-<td>{{metadata.columnfamily_name}}</td>
-<td>{{metadata.column_name}}</td>
-<td>{{metadata.component_index}}</td>
-<td>{{metadata.index_name}}</td>
-<td>{{metadata.index_options}}</td>
-<td>{{metadata.index_type}}</td>
-<td>{{metadata.type}}</td>
-<td>{{metadata.validator}}</td>
-</tr>
-</table>
-</tr>
-</table>
-<div ng-repeat="tablerow in keyspacedata.tabledata">
-{{tablerow}}
-</div>
-<form ng-submit="createSchema()">
-<table>
-<tr>
-<td>Kespace Name:</td>
-<td><input ng-model="scehmaName"><br></td>
-</tr>
-<tr>
-<td>Class:</td>
-<td><select name="class">
-	<option name="SimpleStrategy">SimpleStrategy</option>
-	<option name="Stratagy">Another Strategy</option>
-	</select><br></td>
-</tr>
-<tr>
-<td>Replication Factor:</td>
-<td><select name="replication">
-	<option name="1">1</option>
-	<option name="2">2</option>
-	</select><br></td>
-</tr>
-<tr>
-  <td>  <button type="submit">Create Keyspace</button><br></td>
-</tr>
-</table>
-</form>
+	<div class="ui-tabs">
+		<ul class="ui-tabs-nav">
+			<li><a href="#tabs-1">Tab One</a></li>
+			<li><a href="#tabs-2">CQL</a></li>
+			<li><a href="#tabs-3">Tab Three</a></li>
+		</ul>
+		<div ng-controller="MyController">
+			<div id="tabs-1" class="ui-tabs-panel">
+				<div>
+					{{person.name}}
+					<form ng-submit="connectToDB()">
+						<button type="submit">Connect</button>
+					</form>
+					<form ng-submit="sendPost()">
+						<button type="submit">Get Keyspaces</button>
+						<br>
+					</form>
+					<table>
+						<tr>
+							Keyspaces:
+							<br>
+							<div ng-repeat="keyspace in keyspaces">
+								<a href="javascript:void(0);"
+									ng-click="getKeyspaceSchema(keyspace.keyspace_name);">{{keyspace.keyspace_name}}</a>
+								<!--<input type="radio" name="keyspace" value=keyspace.keyspace_name>{{keyspace.keyspace_name}}-->
+							</div>
+						</tr>
+						<tr>
+							Tables in {{keyspacedata.name}}:<br>
+							<div ng-repeat="columnfamily in columnfamilynames">
+								{{columnfamily.columnfamily_name}}<a href="javascript:void(0);"
+									ng-click="tableMetaData(columnfamily.columnfamily_name);">Metadata</a>
+								<a href="javascript:void(0);"
+									ng-click="getTableData(columnfamily.columnfamily_name);">TableData</a>
+							</div>
+						</tr>
+						<tr>
+							<div ng-show="keyspacedata.metadata.length">
+								Table MetaData of {{keyspacedata.name}}.{{keyspacedata.Table}}
+								<table ng-show="keyspacedata.metadata.length">
+									<thead>
+										<tr>
+											<td>column name</td>
+											<td>component index</td>
+											<td>index name</td>
+											<td>index options</td>
+											<td>index type</td>
+											<td>metadata type</td>
+											<td>metadata validator</td>
+										</tr>
+									</thead>
+									<tr ng-repeat="metadata in keyspacedata.metadata">
+										<td>{{metadata.column_name}}</td>
+										<td>{{metadata.component_index}}</td>
+										<td>{{metadata.index_name}}</td>
+										<td>{{metadata.index_options}}</td>
+										<td>{{metadata.index_type}}</td>
+										<td>{{metadata.type}}</td>
+										<td>{{metadata.validator}}</td>
+									</tr>
+								</table>
+							</div>
+						</tr>
+					</table>
+					<div ng-show="keyspacedata.tabledata.length">
+						Table contents of {{keyspacedata.name}}.{{keyspacedata.Table}}
+						<div ng-repeat="tablerow in keyspacedata.tabledata">
+							{{tablerow}}</div>
+					</div>
+					<form ng-submit="createSchema()">
+						<table>
+							<tr>
+								<td>Kespace Name:</td>
+								<td><input ng-model="scehmaName"><br></td>
+							</tr>
+							<tr>
+								<td>Class:</td>
+								<td><select name="class">
+										<option name="SimpleStrategy">SimpleStrategy</option>
+										<option name="Stratagy">Another Strategy</option>
+								</select><br></td>
+							</tr>
+							<tr>
+								<td>Replication Factor:</td>
+								<td><select name="replication">
+										<option name="1">1</option>
+										<option name="2">2</option>
+								</select><br></td>
+							</tr>
+							<tr>
+								<td>
+									<button type="submit">Create Keyspace</button>
+									<br>
+								</td>
+							</tr>
+						</table>
+					</form>
 
-<form ng-submit="deleteKeyspace()">
-    <input ng-model="DropKeyspace">
-    <button type="submit">Delete Keyspace</button><br>
-{{deleted}}
-</form>
-    </div>
-	</div>
-
-<div id="tabs-2" class="ui-tabs-panel">
-		<form  ng-submit="sendQuery()" >
-			Enter a Query:<br>
-			<input  ng-model="queryString">
-			<br>
-			<button type="submit">Submit Query</button><br>
-			<div ng-repeat="answerRow in answerRows">
-				<p>{{answerRow}}</p><br>
+					<form ng-submit="deleteKeyspace()">
+						<input ng-model="DropKeyspace">
+						<button type="submit">Delete Keyspace</button>
+						<br> {{deleted}}
+					</form>
+				</div>
 			</div>
-		</form>
-	
-</div>
-<div id="tabs-3" class="ui-tabs-panel">
-			<p>Content three.</p>
+
+			<div id="tabs-2" class="ui-tabs-panel">
+				<form ng-submit="sendQuery()">
+					Enter a Query:<br> <input ng-model="queryString"> <br>
+					<button type="submit">Submit Query</button>
+					<br>
+					<div ng-repeat="answerRow in answerRows">
+						<p>{{answerRow}}</p>
+						<br>
+					</div>
+				</form>
+
+			</div>
+			<div id="tabs-3" class="ui-tabs-panel">
+				<p>Content three.</p>
+			</div>
 		</div>
-</div>
-</div>
-  </body>
+	</div>
+</body>
 </html>
 
 <script type="text/javascript">
