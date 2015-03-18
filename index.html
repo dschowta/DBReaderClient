@@ -19,7 +19,7 @@
 	</ul>
 	<div ng-controller="MyController">
 	<div id="tabs-1" class="ui-tabs-panel">
-		    
+		    <div>
 {{person.name}}
 <form ng-submit="connectToDB()">
     <button type="submit">Connect</button>
@@ -27,18 +27,41 @@
 <form ng-submit="sendPost()">
     <button type="submit">Get Keyspaces</button><br>
 </form>
+<table>
 <tr>
+Keyspaces:<br>
 <div ng-repeat="keyspace in keyspaces">
-<td>
-<a href="javascript:void(0);" ng-click="getKeyspaceSchema(keyspace.keyspace_name);">{{keyspace.keyspace_name}}</a></td> 
+<a href="javascript:void(0);" ng-click="getKeyspaceSchema(keyspace.keyspace_name);">{{keyspace.keyspace_name}}</a> 
 <!--<input type="radio" name="keyspace" value=keyspace.keyspace_name>{{keyspace.keyspace_name}}-->
 </div>
 </tr>
+<tr>
+Tables in {{keyspacedata.name}}:<br>
 <div ng-repeat="columnfamily in columnfamilynames">
-<p>{{columnfamily.columnfamily_name}}</p>
+{{columnfamily.columnfamily_name}}<a href="javascript:void(0);" ng-click="tableMetaData(columnfamily.columnfamily_name);">Metadata</a>
+<a href="javascript:void(0);" ng-click="getTableData(columnfamily.columnfamily_name);">TableData</a>
 </div>
-
-
+</tr>
+<tr>
+Table MetaData of {{keyspacedata.name}}.{{keyspacedata.Table}}<br>
+<table>
+<tr ng-repeat="metadata in keyspacedata.metadata">
+<td>{{metadata.keyspace_name}}</td>
+<td>{{metadata.columnfamily_name}}</td>
+<td>{{metadata.column_name}}</td>
+<td>{{metadata.component_index}}</td>
+<td>{{metadata.index_name}}</td>
+<td>{{metadata.index_options}}</td>
+<td>{{metadata.index_type}}</td>
+<td>{{metadata.type}}</td>
+<td>{{metadata.validator}}</td>
+</tr>
+</table>
+</tr>
+</table>
+<div ng-repeat="tablerow in keyspacedata.tabledata">
+{{tablerow}}
+</div>
 <form ng-submit="createSchema()">
 <table>
 <tr>
@@ -70,7 +93,8 @@
     <button type="submit">Delete Keyspace</button><br>
 {{deleted}}
 </form>
-</div>
+    </div>
+	</div>
 
 <div id="tabs-2" class="ui-tabs-panel">
 		<form  ng-submit="sendQuery()" >
