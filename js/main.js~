@@ -2,6 +2,9 @@ var app = angular.module('myApp', []);
 app.run(function($rootScope) {
   $rootScope.name = "Ari Lerner";
 });
+app.config(function($httpProvider){
+    delete $httpProvider.defaults.headers.common['X-Requested-With'];
+});
 app.controller('MyController',['$scope','$http', function($scope,$http) {
   $scope.person = {
     name: "Try It"
@@ -15,7 +18,19 @@ app.controller('MyController',['$scope','$http', function($scope,$http) {
 	metadata:"",
 	tabledata:""
 };
+
+$scope.dataType=[{name:'ascii',id:1},{name:'bigint',id:2},{name:'blob',id:3},{name:'boolean',id:4},{name:'counter',id:5},{name:'decimal',id:6},{name:'double',id:7},{name:'float',id:8},{name:'inet',id:9},{name:'int',id:10},{name:'list',id:11},{name:'map',id:12},{name:'set',id:13},{name:'text',id:14},{name:'timestamp',id:15},{name:'uuid',id:16},{name:'timeuuid',id:17},{name:'varchar',id:18},{name:'varint',id:19}];
+
+$scope.choices = [{id: 'choice1'}];
+$scope.columnsname=[];
+$scope.primarykeys=[];
+$scope.showCreateTableForm = false;
 $scope.sendPost = function() {
+	$scope.keyspacedata.name = "";
+	$scope.keyspacedata.Table ="";
+	$scope.keyspacedata.metadata = "";
+	$scope.keyspacedata.tabledata = "";
+	$scope.columnfamilynames="";
 var dataToPost = {query:"SELECT keyspace_name FROM system.schema_keyspaces;"}; /* PostData*/
     //var queryParams = {params: {op: 'saveEmployee'}};/* Query Parameters*/
     $http.post("http://localhost:9000/getKeyspaces", dataToPost)
@@ -24,7 +39,30 @@ var dataToPost = {query:"SELECT keyspace_name FROM system.schema_keyspaces;"}; /
                 $scope.keyspaces = serverResponse;
             });
 }
-
+$scope.testCreateTable=function()
+{
+	$scope.showCreateTableForm = !$scope.showCreateTableForm;
+}
+$scope.checkForm=function()
+{
+	return $scope.showCreateTableForm;
+}
+$scope.createTable=function(){
+angular.forEach($scope.choices,function(value,index){
+                $scope.columnsname.push({'name':value.name,'type':value.datatype});
+		$scope.primarykeys.push(value.name);
+            });
+var datatoPost ={table:{name: $scope.NewTableName , columns: $scope.columnsname, primarykeys : $scope.primarykeys}};
+$scope.query = datatoPost;
+$http.post("http://127.0.0.1:9000/keyspace/"+$scope.keyspacedata.name+"/table", datatoPost)
+            .success(function(serverResponse, status) {
+                // Updating the $scope postresponse variable to update theview
+                $scope.response = serverResponse;
+		$scope.choices = [{id: 'choice1'}];
+		$scope.NewTableName="";
+		$scope.getKeyspaceSchema($scope.keyspacedata.name);
+            });
+}
 
 $scope.connectToDB = function() {
 var dataToPost = {  hostname:"127.0.0.1",  port:"9042"}; /* PostData*/
@@ -50,6 +88,7 @@ $scope.getKeyspaceSchema = function(keySpace) {
 	$scope.keyspacedata.name = keySpace;
 	$scope.keyspacedata.Table ="";
 	$scope.keyspacedata.metadata = "";
+	$scope.keyspacedata.tabledata = "";
 var dataToPost = {query:"SELECT columnfamily_name FROM system.schema_columnfamilies WHERE keyspace_name = '"+$scope.keyspacedata.name+"';"}; /* PostData*/
     $http.post("http://localhost:9000/getTableSchema", dataToPost)
             .success(function(serverResponse, status) {
@@ -99,7 +138,7 @@ $scope.dropTable = function(index,tablename) {
             .success(function(serverResponse, status) {
                 // Updating the $scope postresponse variable to update theview
 		$scope.response=serverResponse;
-		getKeyspaceSchema($scope.keyspacedata.name);
+		$scope.getKeyspaceSchema($scope.keyspacedata.name);
             }).error(function(serverResponse, status) {
     // called asynchronously if an error occurs
     // or server returns response with an error status.
@@ -116,6 +155,22 @@ $scope.sendQuery = function() {
 	            });
 }
 
+$scope.addNewChoice = function() {
+  var newItemNo = $scope.choices.length+1;
+  $scope.choices.push({'id':'choice'+newItemNo});
+}
+
+$scope.showAddChoice = function(choice) {
+  return choice.id === $scope.choices[$scope.choices.length-1].id;
+}
+
+$scope.removeChoice = function() {
+  var newItemNo = $scope.choices.length-1;
+	if($scope.choices.length>1)
+{
+	$scope.choices.pop();
+}
+}
 }]);
 
 

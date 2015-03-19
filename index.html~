@@ -41,7 +41,22 @@
 							</div>
 						</tr>
 						<tr>
-							Tables in {{keyspacedata.name}}:<br>
+							Tables in {{keyspacedata.name}}: <a href="javascript:void(0);"
+									ng-click="testCreateTable();"><img src="images/add.png" title="Add Table"/></a><br>
+							{{showCreateTableForm}}
+							<form ng-show="showCreateTableForm = true">
+								Table Name: <input ng-model="NewTableName">
+								<div class="form-group" data-ng-repeat="choice in choices">
+  								Column Name:
+								<input type="text" ng-model="choice.name" name="">
+								Data Type:
+								<select ng-model="choice.datatype" ng-options="data.name as data.name for data in dataType"></select>
+  								<a href="javascript:void(0);" ng-show="showAddChoice(choice)" ng-click="addNewChoice()"><img src="images/add.png" title="Add new column"/></a>
+								<a href="javascript:void(0);"  ng-click="removeChoice()"><img src="images/trash.png" title="Delete column"/></a><br>
+								
+							</div>
+							<button ng-click="createTable()" ng-disabled="!(!!NewTableName && !!keyspacedata.name) ">Create Table</button>	
+							</form>
 							<table ng-repeat="columnfamily in columnfamilynames">
 								<tr>
 								 <td>{{columnfamily.columnfamily_name}}</td>
@@ -54,7 +69,7 @@
 								</td>
 								<td> 
 								<a href="javascript:void(0);"
-									ng-click="dropTable($index,columnfamily.columnfamily_name);"><img src="images/delete.jpg" title="Delete"/></a>
+									ng-click="dropTable($index,columnfamily.columnfamily_name);"><img src="images/delete.png" title="Delete"/></a>
 								<td>
 								</tr>
 							</table>
@@ -111,7 +126,7 @@
 							</tr>
 							<tr>
 								<td>
-									<button type="submit">Create Keyspace</button>
+									<button type="submit" ng-disabled="!(!!scehmaName)">Create Keyspace</button>
 									<br>
 								</td>
 							</tr>
