@@ -10,6 +10,7 @@ app.controller('MyController',['$scope','$http', function($scope,$http) {
     name: "Try It"
   };
   $scope.queryString = "";
+  $scope.rowValue = [];
   $scope.keyspacedata ={
 	name:"",
 	Table:"",
@@ -136,6 +137,8 @@ $scope.getTableData = function(tablename) {
 		$scope.temp=serverResponse;
                 $scope.keyspacedata.tabledata = serverResponse;
             });
+    
+    $scope.tableMetaData(tablename);
 }
 
 $scope.dropTable = function(index,tablename) {
@@ -145,7 +148,132 @@ $scope.dropTable = function(index,tablename) {
             .success(function(serverResponse, status) {
                 // Updating the $scope postresponse variable to update theview
 		$scope.response=serverResponse;
-		$scope.getKeyspaceSchema($scope.keyspacedata.name);
+		$scope.columnfamilynames.splice(index, 1);//delete the index from view
+            }).error(function(serverResponse, status) {
+    // called asynchronously if an error occurs
+    // or server returns response with an error status.
+	$scope.error = serverResponse;
+  });
+}
+
+/*Check whether the columns is of string type or not*/
+function isStringType(columnname, metadata){
+	
+		var retVal = false;
+		for (var i = 0; i < metadata.length; i++) {
+			var element = metadata[i];
+			if(element.column_name	 == columnname){
+				retVal =  element.validator=="org.apache.cassandra.db.marshal.UTF8Type"?true:false;
+				break;
+			}
+		}
+		
+		return retVal;
+	
+}
+
+//check whether the column is primary key or not
+function isPrimaryKey (columnname, metadata){
+	var retVal = false;
+	for (var i = 0; i < metadata.length; i++) {
+		var element = metadata[i];
+		if(element.column_name	 == columnname){
+			retVal =  element.type=="partition_key"?true:false;
+			break;
+		}
+	}
+	
+	return retVal;
+}																																																			
+$scope.deleteRow = function(index,tablename) {
+	var tableRow = $scope.keyspacedata.tabledata[index];
+
+	
+	//$scope.tableMetaData(tablename);
+	
+	var metadata = $scope.keyspacedata.metadata;
+	
+
+	
+
+	
+	
+	//find the search condition to delete the row
+	var conditionVal = "";
+	for (var i = 0; i < Object.keys(tableRow).length; i++) {
+		
+		key = Object.keys(tableRow)[i];
+		if(isPrimaryKey(key,metadata)){
+			if("" != conditionVal){
+				conditionVal += " AND ";
+			}
+			Value = tableRow[key];
+			var quotes = isStringType(key,metadata)?"'":"";//if strring, add quotations
+			conditionVal += key + "=" +quotes+  Value + quotes; 
+		}
+			
+	}
+	
+
+	var req = {
+			 method: 'DELETE',
+			 url: "http://127.0.0.1:9000/keyspace/"+$scope.keyspacedata.name+"/table/" + tablename+"/row",
+			 headers: {
+			   'Content-Type': "application/json"
+			 },
+			 data: {row:{condition:conditionVal}} 
+	};
+	$http(req).success(function(serverResponse, status) {
+                // Updating the $scope postresponse variable to update theview
+		$scope.response=serverResponse;
+		$scope.keyspacedata.tabledata.splice(index, 1);//delete the index from view
+            }).error(function(serverResponse, status) {
+    // called asynchronously if an error occurs
+    // or server returns response with an error status.
+	$scope.error = serverResponse;
+  });
+}
+
+//get the array of columns
+function getColumnNames (metadata){
+	var retVal = [];
+	for (var i = 0; i < metadata.length; i++) {
+		retVal[i] = metadata[i].column_name;
+	}
+	
+	return retVal;
+}
+
+$scope.addRow = function(index,tablename) {
+	
+	/*prepare the queries*/
+	var columnNames = getColumnNames($scope.keyspacedata.metadata);//TODO: is this consistent with row values?
+	var values = $scope.rowValue.slice();//copy array elements
+	for(var i=0; i<values.length; i++){
+		if(isStringType(columnNames[i],$scope.keyspacedata.metadata)){
+			values[i] = "'"+values[i]+"'";
+		}
+	}
+	var req = {
+			 method: 'POST',
+			 url: "http://127.0.0.1:9000/keyspace/"+$scope.keyspacedata.name+"/table/" + tablename+"/row",
+			 headers: {
+			   'Content-Type': "application/json"
+			 },
+			 data: {row:{columns:columnNames,
+				 		 values:values}} 
+	};
+	$http(req).success(function(serverResponse, status) {
+                // Updating the $scope postresponse variable to update theview
+					$scope.response=serverResponse;
+					/*Add the new row. not by a new query .. just update the view*/
+					var newRow = {};
+					for(var i=0; i<columnNames.length; i++){
+						newRow[columnNames[i]] = $scope.rowValue[i];
+						$scope.rowValue[i] = "";//empty the input box
+					}
+					$scope.keyspacedata.tabledata.push(newRow);
+					
             }).error(function(serverResponse, status) {
     // called asynchronously if an error occurs
     // or server returns response with an error status.
