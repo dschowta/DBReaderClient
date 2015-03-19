@@ -43,8 +43,7 @@
 						<tr>
 							Tables in {{keyspacedata.name}}: <a href="javascript:void(0);"
 									ng-click="testCreateTable();"><img src="images/add.png" title="Add Table"/></a><br>
-							{{showCreateTableForm}}
-							<form ng-show="showCreateTableForm = true">
+							<form>
 								Table Name: <input ng-model="NewTableName">
 								<div class="form-group" data-ng-repeat="choice in choices">
   								Column Name:
@@ -78,14 +77,22 @@
 						<tr>
 							<div ng-show="keyspacedata.metadata.length">
 								Table MetaData of {{keyspacedata.name}}.{{keyspacedata.Table}}
+								<div>
+  								Column Name:
+								<input type="text" ng-model="coulmn.name" name="">
+								Data Type:
+								<select ng-model="coulmn.datatype" ng-options="data.name as data.name for data in dataType"></select>
+  								<a href="javascript:void(0);" ng-click="addNewColumn()"><img src="images/add.png" title="Add new column"/></a></div>
 								<table ng-show="keyspacedata.metadata.length" border="1">
 									<tr>
 										<th ng-repeat="(header, value) in keyspacedata.metadata[0]">
 				      							{{header}}
 				 						</th>
+										<th> </th>
 									</tr>
 									<tr ng-repeat="metadata in keyspacedata.metadata">
 										<td ng-repeat="(key, val) in metadata">{{val}}</td>
+										<td><a href="javascript:void(0);" ng-click="deleteColumn()"><img src="images/trash.png" title="Delete column"/></a></td>
 									</tr>
 								</table>
 							</div>

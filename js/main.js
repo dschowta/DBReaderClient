@@ -55,6 +55,22 @@ $http.post("http://127.0.0.1:9000/keyspace/"+$scope.keyspacedata.name+"/table", 
             });
 }
 
+$scope.addNewColumn=function(){
+var dataToPost={column:{name: $scope.coulmn.name , type:$scope.coulmn.datatype}};
+$http.post("http://127.0.0.1:9000/keyspace/"+$scope.keyspacedata.name+"/table/"+$scope.keyspacedata.Table+"/column",dataToPost)
+	.success(function(serverResponse,status){
+	$scope.tableMetaData($scope.keyspacedata.Table);
+	$scope.coulmn.name="";
+	$scope.coulmn.datatype="";
+	});
+}
+
+$scope.deleteColumn=function(columnname){
+$http.delete("http://127.0.0.1:9000/keyspace/"+$scope.keyspacedata.name+"/table/"+$scope.keyspacedata.Table+"/column/"+columnname)
+	.success(function(serverResponse,status){
+		$scope.tableMetaData($scope.keyspacedata.Table);
+});
+}
 $scope.connectToDB = function() {
 var dataToPost = {  hostname:"127.0.0.1",  port:"9042"}; /* PostData*/
     //var queryParams = {params: {op: 'saveEmployee'}};/* Query Parameters*/
