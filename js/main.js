@@ -48,7 +48,7 @@ $scope.getAllKeyspaces = function() {
                 $scope.keyspaces = serverResponse;
             });
 }
-$scope.createTable=function(){
+$scope.createTable=function(newTableName){
 angular.forEach($scope.choices,function(value,index){
                 $scope.columnsname.push({'name':value.name,'type':value.datatype});
 		if(value.isPrimary == true)
@@ -56,7 +56,7 @@ angular.forEach($scope.choices,function(value,index){
 			$scope.primarykeys.push(value.name);
 		}
             });
-var datatoPost ={table:{name: $scope.NewTableName , columns: $scope.columnsname, primarykeys : $scope.primarykeys}};
+var datatoPost ={table:{name: newTableName , columns: $scope.columnsname, primarykeys : $scope.primarykeys}};
 $scope.query = datatoPost;
 $http.post("http://127.0.0.1:9000/keyspace/"+$scope.keyspacedata.name+"/table", datatoPost)
             .success(function(serverResponse, status) {
@@ -103,6 +103,7 @@ var dataToPost = {  hostname:"127.0.0.1",  port:"9042"}; /* PostData*/
                 $scope.person.name = serverResponse;
 		$scope.getAllKeyspaces();
 		$scope.connect="Disconnect";
+		$scope.showCreateKeyspace=false;
             });
 }
 else
@@ -144,7 +145,7 @@ var dataToPost = {keyspacename:$scope.newKeyspace.scehmaName,
 }
 
 $scope.testCreateTable=function(){
-$scope.showCreateTable=!$scope.showCreateTable;
+$scope.showCreateTable= true;
 }
 
 $scope.testCreateSchema=function(){
