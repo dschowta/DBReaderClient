@@ -88,11 +88,13 @@
 										<th ng-repeat="(header, value) in keyspacedata.metadata[0]">
 				      							{{header}}
 				 						</th>
-										<th> </th>
+										<th></th>
+										<th>Alter</th>
 									</tr>
 									<tr ng-repeat="metadata in keyspacedata.metadata">
 										<td ng-repeat="(key, val) in metadata">{{val}}</td>
 							<td><a href="javascript:void(0);" ng-click="deleteColumn(metadata.column_name);"><img src="images/trash.png" title="Delete column"/></a></td>
+							<td><select ng-model="editCol.datatype" ng-options="data.name as data.name for data in dataType"></select><a href="javascript:void(0);" ng-click="editColumn(metadata.column_name,editCol.datatype);"><img src="images/edit.png" title="edit column"/></a></td>
 									</tr>
 								</table>
 							</div>
