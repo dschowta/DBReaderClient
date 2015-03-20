@@ -113,7 +113,7 @@
 			 						<div ng-show="!rowEditVisible(rowIndex,$index)" 
 			 							ng-click="showRowEdit(val,rowIndex,$index)">{{val}}</div>
 			 						<input ng-model="rowEditValue" ng-show="rowEditVisible(rowIndex,$index)" ><br>
-			 						<button ng-show="rowEditVisible(rowIndex,$index)" ng-click="updateRow(keyspacedata.Table,key)">save</button>
+			 						<button ng-show="rowEditVisible(rowIndex,$index)" ng-click="updateRow(keyspacedata.Table,key,rowEditValue)">save</button>
 			 						<button ng-show="rowEditVisible(rowIndex,$index)" ng-click="hideRowEdit()">cancel</button>
 		 						</td>
 		 						<td> 
