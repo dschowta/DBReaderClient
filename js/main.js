@@ -34,9 +34,8 @@ $scope.sendPost = function() {
 	$scope.keyspacedata.metadata = "";
 	$scope.keyspacedata.tabledata = "";
 	$scope.columnfamilynames="";
-var dataToPost = {query:"SELECT keyspace_name FROM system.schema_keyspaces;"}; /* PostData*/
     //var queryParams = {params: {op: 'saveEmployee'}};/* Query Parameters*/
-    $http.post("http://localhost:9000/getKeyspaces", dataToPost)
+    $http.get("http://localhost:9000/keyspace")
             .success(function(serverResponse, status) {
                 // Updating the $scope postresponse variable to update theview
                 $scope.keyspaces = serverResponse;
@@ -87,7 +86,7 @@ $scope.editColumn=function(columnname,datatype){
 $scope.connectToDB = function() {
 var dataToPost = {  hostname:"127.0.0.1",  port:"9042"}; /* PostData*/
     //var queryParams = {params: {op: 'saveEmployee'}};/* Query Parameters*/
-    $http.post("http://localhost:9000/connectToCassandra", dataToPost)
+    $http.post("http://localhost:9000/connection", dataToPost)
             .success(function(serverResponse, status) {
                 // Updating the $scope postresponse variable to update theview
                 $scope.person.name = serverResponse;
@@ -95,9 +94,14 @@ var dataToPost = {  hostname:"127.0.0.1",  port:"9042"}; /* PostData*/
 }
 
 $scope.createSchema = function() {
-var dataToPost = {query:"CREATE KEYSPACE " + $scope.scehmaName +" WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 3 }"}; 
-    //var queryParams = {params: {op: 'saveEmployee'}};/* Query Parameters*/
-    $http.post("http://localhost:9000/createKeyspace", dataToPost)
+	//TODO: hardcoded here. take from user
+var dataToPost = {keyspacename:$scope.scehmaName, 
+					kclass:"SimpleStrategy",
+					replication_factor:3};
+					
+					
+    //TODO: get the URI from user with a default vale
+    $http.post("http://localhost:9000/keyspace", dataToPost)
             .success(function(serverResponse, status) {
                 // Updating the $scope postresponse variable to update theview
                 $scope.person.name = serverResponse;
@@ -109,8 +113,8 @@ $scope.getKeyspaceSchema = function(keySpace) {
 	$scope.keyspacedata.Table ="";
 	$scope.keyspacedata.metadata = "";
 	$scope.keyspacedata.tabledata = "";
-var dataToPost = {query:"SELECT columnfamily_name FROM system.schema_columnfamilies WHERE keyspace_name = '"+$scope.keyspacedata.name+"';"}; /* PostData*/
-    $http.post("http://localhost:9000/getTableSchema", dataToPost)
+
+    $http.get("http://localhost:9000/keyspace/"+keySpace+"/table")
             .success(function(serverResponse, status) {
                 // Updating the $scope postresponse variable to update theview
                 $scope.columnfamilynames = serverResponse;
@@ -119,8 +123,8 @@ var dataToPost = {query:"SELECT columnfamily_name FROM system.schema_columnfamil
 }
 
 $scope.deleteKeyspace = function() {
-var dataToPost = {query:"DROP KEYSPACE "+ $scope.DropKeyspace +";"}; /* PostData*/
-    $http.post("http://localhost:9000/deleteKeyspace", dataToPost)
+
+    $http.delete("http://localhost:9000/keyspace/"+$scope.DropKeyspace)
             .success(function(serverResponse, status) {
                 // Updating the $scope postresponse variable to update theview
                 $scope.deleted = serverResponse;
