@@ -106,8 +106,14 @@
       								{{header}}
  								</th>
 							</tr>
-							<tr ng-repeat="data in keyspacedata.tabledata">
-		 						<td ng-repeat="(key, val) in data">{{val}}</td>
+							<tr ng-repeat="data in keyspacedata.tabledata" ng-init="rowIndex = $index">
+		 						<td ng-repeat="(key, val) in data">
+			 						<div ng-show="!rowEditVisible(rowIndex,$index)" 
+			 							ng-click="showRowEdit(val,rowIndex,$index)">{{val}}</div>
+			 						<input ng-model="rowEditValue" ng-show="rowEditVisible(rowIndex,$index)" ><br>
+			 						<button ng-show="rowEditVisible(rowIndex,$index)" ng-click="updateRow(keyspacedata.Table,key)">save</button>
+			 						<button ng-show="rowEditVisible(rowIndex,$index)" ng-click="hideRowEdit()">cancel</button>
+		 						</td>
 		 						<td> 
 								<a href="javascript:void(0);"
 									ng-click="deleteRow($index,keyspacedata.Table);"><img src="images/delete.png" title="Delete"/></a>
@@ -119,7 +125,7 @@
 								</td>
 								<td> 
 								<a href="javascript:void(0);"
-									ng-click="addRow(keyspacedata.tabledata.length,keyspacedata.Table);">+</a>
+									ng-click="addRow(keyspacedata.tabledata.length,keyspacedata.Table);"><img src="images/add.png" title="Add Row"/></a>
 								</td>
 							</tr>
 						</table>

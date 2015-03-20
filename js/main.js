@@ -11,6 +11,9 @@ app.controller('MyController',['$scope','$http', function($scope,$http) {
   };
   $scope.queryString = "";
   $scope.rowValue = [];
+  $scope.editableRow = -1;
+  $scope.editablecolumn = -1;
+  $scope.rowEditValue = "";
   $scope.keyspacedata ={
 	name:"",
 	Table:"",
@@ -193,11 +196,6 @@ $scope.deleteRow = function(index,tablename) {
 	
 	var metadata = $scope.keyspacedata.metadata;
 	
-
-	
-
-	
-	
 	//find the search condition to delete the row
 	var conditionVal = "";
 	for (var i = 0; i < Object.keys(tableRow).length; i++) {
@@ -279,6 +277,92 @@ $scope.addRow = function(index,tablename) {
     // or server returns response with an error status.
 	$scope.error = serverResponse;
   });
+}
+
+//Show the text box for editing
+$scope.showRowEdit = function(val,row,col){
+	$scope.editableRow = row;
+	$scope.editablecolumn = col;
+	$scope.rowEditValue = val;
+}
+
+$scope.rowEditVisible = function(row,col){
+	retVal = false;
+	if(row == $scope.editableRow && col == $scope.editablecolumn){
+		retVal = true;
+	}
+	return retVal;
+}
+//hide the text box for editing
+$scope.hideRowEdit = function(){
+	$scope.editableRow = -1;
+	$scope.editablecolumn = -1;
+	
+}
+
+$scope.updateRow = function(tablename, column) {
+	var tableRow = $scope.keyspacedata.tabledata[$scope.editableRow];
+
+	
+	//$scope.tableMetaData(tablename);
+	
+	var metadata = $scope.keyspacedata.metadata;
+	
+	//find the search condition to delete the row
+	var conditionVal = "";
+	for (var i = 0; i < Object.keys(tableRow).length; i++) {
+		
+		key = Object.keys(tableRow)[i];
+		if(isPrimaryKey(key,metadata)){
+			if("" != conditionVal){
+				conditionVal += " AND ";
+			}
+			Value = tableRow[key];
+			var quotes = isStringType(key,metadata)?"'":"";//if strring, add quotations
+			conditionVal += key + "=" +quotes+  Value + quotes; 
+		}
+			
+	}
+	
+	var req = {
+			 method: 'PUT',
+			 url: "http://127.0.0.1:9000/keyspace/"+$scope.keyspacedata.name+"/table/" + tablename+"/row",
+			 headers: {
+			   'Content-Type': "application/json"
+			 },
+			 data: {row:{
+				 		columns:[column],
+				 		values:[$scope.rowEditValue],
+				 		condition:conditionVal}} 
+	};
+	$http(req).success(function(serverResponse, status) {
+                // Updating the $scope postresponse variable to update theview
+		$scope.response=serverResponse;
+		tableRow[column] = $scope.rowEditValue;//edit the index from view
+		$scope.hideRowEdit();
+            }).error(function(serverResponse, status) {
+    // called asynchronously if an error occurs
+    // or server returns response with an error status.
+            	$scope.hideRowEdit();
+            	$scope.error = serverResponse;
+  });
+}
+
+$scope.rowEditAction = function(event,tablename ){
+	var codes = {ENTER: 13,
+				ESC: 27};
+	switch (event.which) {
+		case codes.ENTER:{
+			$scope.updateRow(tablename);
+		}
+			break;
+		case codes.ESC:{
+			$scope.hideRowEdit();
+		}
+			break;
+		default:
+			break;
+	}
 }
 
 $scope.sendQuery = function() {
