@@ -32,6 +32,9 @@ $scope.columnsname=[];
 $scope.primarykeys=[];
 $scope.showCreateTable=false;
 $scope.showTable= false;
+$scope.showCreateKeyspace=false;
+$scope.connect="Connect";
+
 $scope.getAllKeyspaces = function() {
 	$scope.keyspacedata.name = "";
 	$scope.keyspacedata.Table ="";
@@ -91,13 +94,34 @@ $scope.editColumn=function(columnname,datatype){
 		});
 }
 $scope.connectToDB = function() {
+if($scope.connect=="Connect"){
 var dataToPost = {  hostname:"127.0.0.1",  port:"9042"}; /* PostData*/
     //var queryParams = {params: {op: 'saveEmployee'}};/* Query Parameters*/
     $http.post("http://localhost:9000/connection", dataToPost)
             .success(function(serverResponse, status) {
                 // Updating the $scope postresponse variable to update theview
                 $scope.person.name = serverResponse;
+		$scope.getAllKeyspaces();
+		$scope.connect="Disconnect";
             });
+}
+else
+{
+	$http.delete("http://localhost:9000/connection")
+		.success(function(serverResponse,status){
+			$scope.person.name = serverResponse;
+			$scope.connect="Connect";
+			$scope.keyspaces="";
+			$scope.keyspacedata.name = "";
+			$scope.keyspacedata.Table ="";
+			$scope.keyspacedata.metadata = "";
+			$scope.keyspacedata.tabledata = "";
+			$scope.columnfamilynames="";
+			$scope.showCreateTable=false;
+			$scope.showCreateKeyspace=false;
+			$scope.showTable= false;
+		});
+}
 }
 
 $scope.createSchema = function() {
@@ -122,6 +146,11 @@ var dataToPost = {keyspacename:$scope.newKeyspace.scehmaName,
 $scope.testCreateTable=function(){
 $scope.showCreateTable=!$scope.showCreateTable;
 }
+
+$scope.testCreateSchema=function(){
+$scope.showCreateKeyspace=!$scope.showCreateKeyspace;
+}
+
 
 $scope.getKeyspaceSchema = function(keySpace) {
 	$scope.keyspacedata.name = keySpace;

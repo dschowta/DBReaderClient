@@ -26,16 +26,41 @@
 					{{person.name}}
 					{{error}}
 					<form ng-submit="connectToDB()">
-						<button type="submit">Connect</button>
+						<button type="submit">{{connect}}</button>
 					</form>
-					<form ng-submit="getAllKeyspaces()">
-						<button type="submit">Get Keyspaces</button>
-						<br>
+					<form ng-submit="createSchema()" ng-show="showCreateKeyspace">
+						<table>
+							<tr>
+							<h4>Add New Keyspace</h4>
+							</tr>
+							<tr>
+								<td>Kespace Name:</td>
+								<td><input ng-model="newKeyspace.scehmaName"><br></td>
+							</tr>
+							<tr>
+								<td>Class:</td>
+								<td><select ng-model="newKeyspace.className" ng-options="class.name as class.name for class in KeyspaceClass">
+								</select></td>
+							</tr>
+							<tr ng-show="newKeyspace.className=='SimpleStrategy'">
+								<td>Replication Factor:</td>
+								<td><input type="number" ng-model="newKeyspace.Replicationfactor"></td>
+							</tr>
+							<tr>
+								<td>
+									<button type="submit" ng-disabled="!(!!newKeyspace.scehmaName)">Create Keyspace</button>
+									<br>
+								</td>
+							</tr>
+						</table>
 					</form>
 					<table>
 						<tr >	
 							<table ng-show="keyspaces.length">
-							<tr><td>Keyspaces:</td></tr>
+							<tr><td>Keyspaces:</td>
+							<td><a href="javascript:void(0);"
+									ng-click="testCreateSchema();"><img src="images/add.png" title="Add Keyspace"/></td>
+							</tr>
 						
 							<tr ng-repeat="keyspace in keyspaces">
 								<td><a href="javascript:void(0);"
@@ -150,29 +175,7 @@
 							</tr>
 						</table>
 					</div>
-					<form ng-submit="createSchema()">
-						<table>
-							<tr>
-								<td>Kespace Name:</td>
-								<td><input ng-model="newKeyspace.scehmaName"><br></td>
-							</tr>
-							<tr>
-								<td>Class:</td>
-								<td><select ng-model="newKeyspace.className" ng-options="class.name as class.name for class in KeyspaceClass">
-								</select></td>
-							</tr>
-							<tr ng-show="newKeyspace.className=='SimpleStrategy'">
-								<td>Replication Factor:</td>
-								<td><input type="number" ng-model="newKeyspace.Replicationfactor"></td>
-							</tr>
-							<tr>
-								<td>
-									<button type="submit" ng-disabled="!(!!newKeyspace.scehmaName)">Create Keyspace</button>
-									<br>
-								</td>
-							</tr>
-						</table>
-					</form>
+					
 				</div>
 			</div>
 
