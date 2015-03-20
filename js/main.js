@@ -25,17 +25,21 @@ app.controller('MyController',['$scope','$http', function($scope,$http) {
 
 $scope.dataType=[{name:'ascii',id:1},{name:'bigint',id:2},{name:'blob',id:3},{name:'boolean',id:4},{name:'counter',id:5},{name:'decimal',id:6},{name:'double',id:7},{name:'float',id:8},{name:'inet',id:9},{name:'int',id:10},{name:'list',id:11},{name:'map',id:12},{name:'set',id:13},{name:'text',id:14},{name:'timestamp',id:15},{name:'uuid',id:16},{name:'timeuuid',id:17},{name:'varchar',id:18},{name:'varint',id:19}];
 
+$scope.KeyspaceClass=[{name:'SimpleStrategy'},{name:'NetworkTopologyStrategy'}];
+
 $scope.choices = [{id: 'choice1'}];
 $scope.columnsname=[];
 $scope.primarykeys=[];
-$scope.sendPost = function() {
+$scope.showCreateTable=false;
+$scope.showTable= false;
+$scope.getAllKeyspaces = function() {
 	$scope.keyspacedata.name = "";
 	$scope.keyspacedata.Table ="";
 	$scope.keyspacedata.metadata = "";
 	$scope.keyspacedata.tabledata = "";
 	$scope.columnfamilynames="";
-    //var queryParams = {params: {op: 'saveEmployee'}};/* Query Parameters*/
-    $http.get("http://localhost:9000/keyspace")
+	$scope.showTable= false;
+  $http.get("http://localhost:9000/keyspace")
             .success(function(serverResponse, status) {
                 // Updating the $scope postresponse variable to update theview
                 $scope.keyspaces = serverResponse;
@@ -44,7 +48,10 @@ $scope.sendPost = function() {
 $scope.createTable=function(){
 angular.forEach($scope.choices,function(value,index){
                 $scope.columnsname.push({'name':value.name,'type':value.datatype});
-		$scope.primarykeys.push(value.name);
+		if(value.isPrimary == true)
+		{
+			$scope.primarykeys.push(value.name);
+		}
             });
 var datatoPost ={table:{name: $scope.NewTableName , columns: $scope.columnsname, primarykeys : $scope.primarykeys}};
 $scope.query = datatoPost;
@@ -95,9 +102,9 @@ var dataToPost = {  hostname:"127.0.0.1",  port:"9042"}; /* PostData*/
 
 $scope.createSchema = function() {
 	//TODO: hardcoded here. take from user
-var dataToPost = {keyspacename:$scope.scehmaName, 
-					kclass:"SimpleStrategy",
-					replication_factor:3};
+var dataToPost = {keyspacename:$scope.newKeyspace.scehmaName, 
+					kclass:$scope.newKeyspace.className,
+					replication_factor:$scope.newKeyspace.Replicationfactor};
 					
 					
     //TODO: get the URI from user with a default vale
@@ -105,7 +112,15 @@ var dataToPost = {keyspacename:$scope.scehmaName,
             .success(function(serverResponse, status) {
                 // Updating the $scope postresponse variable to update theview
                 $scope.person.name = serverResponse;
+		$scope.newKeyspace.className="";
+		$scope.newKeyspace.scehmaName="";
+		$scope.newKeyspace.Replicationfactor="";
+		$scope.getAllKeyspaces();
             });
+}
+
+$scope.testCreateTable=function(){
+$scope.showCreateTable=!$scope.showCreateTable;
 }
 
 $scope.getKeyspaceSchema = function(keySpace) {
@@ -113,7 +128,7 @@ $scope.getKeyspaceSchema = function(keySpace) {
 	$scope.keyspacedata.Table ="";
 	$scope.keyspacedata.metadata = "";
 	$scope.keyspacedata.tabledata = "";
-
+	$scope.showTable= true;
     $http.get("http://localhost:9000/keyspace/"+keySpace+"/table")
             .success(function(serverResponse, status) {
                 // Updating the $scope postresponse variable to update theview
@@ -127,7 +142,7 @@ $scope.deleteKeyspace = function() {
     $http.delete("http://localhost:9000/keyspace/"+$scope.DropKeyspace)
             .success(function(serverResponse, status) {
                 // Updating the $scope postresponse variable to update theview
-                $scope.deleted = serverResponse;
+                $scope.getAllKeyspaces();
             });
 }
 
