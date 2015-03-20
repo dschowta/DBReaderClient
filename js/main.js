@@ -137,9 +137,9 @@ $scope.getKeyspaceSchema = function(keySpace) {
             });
 }
 
-$scope.deleteKeyspace = function() {
+$scope.deleteKeyspace = function(DropKeyspace) {
 
-    $http.delete("http://localhost:9000/keyspace/"+$scope.DropKeyspace)
+    $http.delete("http://localhost:9000/keyspace/"+DropKeyspace)
             .success(function(serverResponse, status) {
                 // Updating the $scope postresponse variable to update theview
                 $scope.getAllKeyspaces();

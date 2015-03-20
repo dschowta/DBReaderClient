@@ -28,34 +28,52 @@
 					<form ng-submit="connectToDB()">
 						<button type="submit">Connect</button>
 					</form>
-					<form ng-submit="sendPost()">
+					<form ng-submit="getAllKeyspaces()">
 						<button type="submit">Get Keyspaces</button>
 						<br>
 					</form>
 					<table>
-						<tr >
-							Keyspaces:<br>
-							<div ng-repeat="keyspace in keyspaces">
-								<a href="javascript:void(0);"
-								ng-click="getKeyspaceSchema(keyspace.keyspace_name);">{{keyspace.keyspace_name}}</a>
-							</div>
+						<tr >	
+							<table ng-show="keyspaces.length">
+							<tr><td>Keyspaces:</td></tr>
+						
+							<tr ng-repeat="keyspace in keyspaces">
+								<td><a href="javascript:void(0);"
+								ng-click="getKeyspaceSchema(keyspace.keyspace_name);">{{keyspace.keyspace_name}}</a></td>
+								<td><a href="javascript:void(0);"
+									ng-click="deleteKeyspace(keyspace.keyspace_name);"><img src="images/trash.png" title="Delete Keyspace"/></a>
+								</td>
+							</tr>
+							</table>
 						</tr>
 						<tr>
-							Tables in {{keyspacedata.name}}: <a href="javascript:void(0);"
-									ng-click="testCreateTable();"><img src="images/add.png" title="Add Table"/></a><br>
-							<form>
-								Table Name: <input ng-model="NewTableName">
-								<div class="form-group" data-ng-repeat="choice in choices">
-  								Column Name:
-								<input type="text" ng-model="choice.name" name="">
-								Data Type:
-								<select ng-model="choice.datatype" ng-options="data.name as data.name for data in dataType"></select>
-  								<a href="javascript:void(0);" ng-show="showAddChoice(choice)" ng-click="addNewChoice()"><img src="images/add.png" title="Add new column"/></a>
-								<a href="javascript:void(0);"  ng-click="removeChoice()"><img src="images/trash.png" title="Delete column"/></a><br>
+							<p ng-show="showTable">Tables in {{keyspacedata.name}}: <a href="javascript:void(0);"
+									ng-click="testCreateTable();"><img src="images/add.png" title="Add Table"/></a><br></p>
+							<form ng-submit="createTable()" ng-show="showCreateTable">	
+								<table>
+								<tr>
+								<td>Table Name:</td>
+								<td> <input ng-model="NewTableName"></td>
+								</tr>
+								<tr>
+								<th>Column Name</th>
+								<th>Datatype</th>
+								<th>Make Primary</th>
+								</tr>
+								<tr class="form-group" data-ng-repeat="choice in choices">
+  								
+								<td><input type="text" ng-model="choice.name" name=""></td>
 								
-							</div>
-							<button ng-click="createTable()" ng-disabled="!(!!NewTableName && !!keyspacedata.name) ">Create Table</button>	
+								<td><select ng-model="choice.datatype" ng-options="data.name as data.name for data in dataType"></select></td>
+								<td><input type="checkbox" ng-model="choice.isPrimary"></td>
+  								<td><a href="javascript:void(0);" ng-show="showAddChoice(choice)" ng-click="addNewChoice()"><img src="images/add.png" title="Add new column"/></a></td>
+								<td><a href="javascript:void(0);"  ng-click="removeChoice()"><img src="images/trash.png" title="Delete column"/></a><br></td></tr></table>
+								
+							
+							<button type="submit" ng-disabled="!(!!NewTableName && !!keyspacedata.name) ">Create Table</button>
 							</form>
+</tr>
+<tr>
 							<table ng-repeat="columnfamily in columnfamilynames">
 								<tr>
 								 <td>{{columnfamily.columnfamily_name}}</td>
@@ -88,11 +106,13 @@
 										<th ng-repeat="(header, value) in keyspacedata.metadata[0]">
 				      							{{header}}
 				 						</th>
-										<th> </th>
+										<th></th>
+										<th>Alter</th>
 									</tr>
 									<tr ng-repeat="metadata in keyspacedata.metadata">
 										<td ng-repeat="(key, val) in metadata">{{val}}</td>
-										<td><a href="javascript:void(0);" ng-click="deleteColumn()"><img src="images/trash.png" title="Delete column"/></a></td>
+							<td><a href="javascript:void(0);" ng-click="deleteColumn(metadata.column_name);"><img src="images/trash.png" title="Delete column"/></a></td>
+							<td><select ng-model="editCol.datatype" ng-options="data.name as data.name for data in dataType"></select><a href="javascript:void(0);" ng-click="editColumn(metadata.column_name,editCol.datatype);"><img src="images/edit.png" title="edit column"/></a></td>
 									</tr>
 								</table>
 							</div>
@@ -106,8 +126,27 @@
       								{{header}}
  								</th>
 							</tr>
-							<tr ng-repeat="data in keyspacedata.tabledata">
-		 						<td ng-repeat="(key, val) in data">{{val}}</td>
+							<tr ng-repeat="data in keyspacedata.tabledata" ng-init="rowIndex = $index">
+		 						<td ng-repeat="(key, val) in data">
+			 						<div ng-show="!rowEditVisible(rowIndex,$index)" 
+			 							ng-click="showRowEdit(val,rowIndex,$index)">{{val}}</div>
+			 						<input ng-model="rowEditValue" ng-show="rowEditVisible(rowIndex,$index)" ><br>
+			 						<button ng-show="rowEditVisible(rowIndex,$index)" ng-click="updateRow(keyspacedata.Table,key,rowEditValue)">save</button>
+			 						<button ng-show="rowEditVisible(rowIndex,$index)" ng-click="hideRowEdit()">cancel</button>
+		 						</td>
+		 						<td> 
+								<a href="javascript:void(0);"
+									ng-click="deleteRow($index,keyspacedata.Table);"><img src="images/delete.png" title="Delete"/></a>
+								</td>
+							</tr>
+							<tr>
+								<td ng-repeat="(header, value) in keyspacedata.tabledata[0]">
+									<input ng-model="rowValue[$index]">
+								</td>
+								<td> 
+								<a href="javascript:void(0);"
+									ng-click="addRow(keyspacedata.tabledata.length,keyspacedata.Table);"><img src="images/add.png" title="Add Row"/></a>
+								</td>
 							</tr>
 						</table>
 					</div>
@@ -115,35 +154,24 @@
 						<table>
 							<tr>
 								<td>Kespace Name:</td>
-								<td><input ng-model="scehmaName"><br></td>
+								<td><input ng-model="newKeyspace.scehmaName"><br></td>
 							</tr>
 							<tr>
 								<td>Class:</td>
-								<td><select name="class">
-										<option name="SimpleStrategy">SimpleStrategy</option>
-										<option name="NetworkTopologyStrategy">Network Topology Strategy</option>
-								</select><br></td>
+								<td><select ng-model="newKeyspace.className" ng-options="class.name as class.name for class in KeyspaceClass">
+								</select></td>
 							</tr>
-							<tr>
+							<tr ng-show="newKeyspace.className=='SimpleStrategy'">
 								<td>Replication Factor:</td>
-								<td><select name="replication">
-										<option name="1">1</option>
-										<option name="2">2</option>
-								</select><br></td>
+								<td><input type="number" ng-model="newKeyspace.Replicationfactor"></td>
 							</tr>
 							<tr>
 								<td>
-									<button type="submit" ng-disabled="!(!!scehmaName)">Create Keyspace</button>
+									<button type="submit" ng-disabled="!(!!newKeyspace.scehmaName)">Create Keyspace</button>
 									<br>
 								</td>
 							</tr>
 						</table>
-					</form>
-
-					<form ng-submit="deleteKeyspace()">
-						<input ng-model="DropKeyspace">
-						<button type="submit">Delete Keyspace</button>
-						<br> {{deleted}}
 					</form>
 				</div>
 			</div>
@@ -153,10 +181,15 @@
 					Enter a Query:<br> <input ng-model="queryString"> <br>
 					<button type="submit">Submit Query</button>
 					<br>
-					<div ng-repeat="answerRow in answerRows">
-						<p>{{answerRow}}</p>
-						<br>
-					</div>
+					<table ng-show="answerRows.length" border="1">
+							<tr >
+								<th ng-repeat="(header, value) in answerRows[0]">
+      								{{header}}
+ 								</th>
+							</tr>
+							<tr ng-repeat="answerRow in answerRows">
+										<td ng-repeat="(key, val) in answerRow">{{val}}</td>
+					</table>
 				</form>
 
 			</div>
