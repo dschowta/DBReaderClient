@@ -30,7 +30,7 @@ $scope.KeyspaceClass=[{name:'SimpleStrategy'},{name:'NetworkTopologyStrategy'}];
 $scope.choices = [{id: 'choice1'}];
 $scope.columnsname=[];
 $scope.primarykeys=[];
-$scope.showCreateTable=false;
+$scope.showCreateTable="";
 $scope.showTable= false;
 $scope.showCreateKeyspace=false;
 $scope.connect="Connect";
@@ -118,7 +118,7 @@ else
 			$scope.keyspacedata.metadata = "";
 			$scope.keyspacedata.tabledata = "";
 			$scope.columnfamilynames="";
-			$scope.showCreateTable=false;
+			$scope.showCreateTable="";
 			$scope.showCreateKeyspace=false;
 			$scope.showTable= false;
 		});
@@ -144,8 +144,11 @@ var dataToPost = {keyspacename:$scope.newKeyspace.scehmaName,
             });
 }
 
-$scope.testCreateTable=function(){
-$scope.showCreateTable= true;
+$scope.testCreateTable=function(keySpaceName){
+	if($scope.showCreateTable==keySpaceName)
+		$scope.showCreateTable = "";
+	else
+		$scope.showCreateTable = keySpaceName;
 }
 
 $scope.testCreateSchema=function(){
