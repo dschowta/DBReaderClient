@@ -64,6 +64,7 @@ $http.post("http://127.0.0.1:9000/keyspace/"+$scope.keyspacedata.name+"/table", 
                 $scope.response = serverResponse;
 		$scope.choices = [{id: 'choice1'}];
 		$scope.NewTableName="";
+		$scope.showCreateTable="";
 		$scope.getKeyspaceSchema($scope.keyspacedata.name);
             });
 }
@@ -429,7 +430,7 @@ $scope.rowEditAction = function(event,tablename ){
 
 $scope.sendQuery = function() {
 	var dataToPost = {query:$scope.queryString +";"}; /* PostData*/
-	    $http.post("http://localhost:9000/getDataFromCassandra", dataToPost)
+	    $http.post("http://localhost:9000/cqlQuery", dataToPost)
 	            .success(function(serverResponse, status) {
 	                // Updating the $scope postresponse variable to update theview
 	                $scope.answerRows = serverResponse;

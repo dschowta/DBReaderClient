@@ -66,7 +66,7 @@
 											title="Add Keyspace" /></td>
 								</tr>
 
-								<tr ng-repeat="keyspace in keyspaces">
+								<tr ng-repeat="keyspace in keyspaces" ng-show="keyspace.keyspace_name!='system' && keyspace.keyspace_name!='system_traces'" >
 									<td valign="top"><a href="javascript:void(0);"
 										ng-click="getKeyspaceSchema(keyspace.keyspace_name);">{{keyspace.keyspace_name}}</a>
 									  	</td><td valign="top"><a href="javascript:void(0);"

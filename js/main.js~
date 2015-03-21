@@ -30,7 +30,7 @@ $scope.KeyspaceClass=[{name:'SimpleStrategy'},{name:'NetworkTopologyStrategy'}];
 $scope.choices = [{id: 'choice1'}];
 $scope.columnsname=[];
 $scope.primarykeys=[];
-$scope.showCreateTable=false;
+$scope.showCreateTable="";
 $scope.showTable= false;
 $scope.showCreateKeyspace=false;
 $scope.connect="Connect";
@@ -48,7 +48,7 @@ $scope.getAllKeyspaces = function() {
                 $scope.keyspaces = serverResponse;
             });
 }
-$scope.createTable=function(){
+$scope.createTable=function(newTableName){
 angular.forEach($scope.choices,function(value,index){
                 $scope.columnsname.push({'name':value.name,'type':value.datatype});
 		if(value.isPrimary == true)
@@ -56,7 +56,7 @@ angular.forEach($scope.choices,function(value,index){
 			$scope.primarykeys.push(value.name);
 		}
             });
-var datatoPost ={table:{name: $scope.NewTableName , columns: $scope.columnsname, primarykeys : $scope.primarykeys}};
+var datatoPost ={table:{name: newTableName , columns: $scope.columnsname, primarykeys : $scope.primarykeys}};
 $scope.query = datatoPost;
 $http.post("http://127.0.0.1:9000/keyspace/"+$scope.keyspacedata.name+"/table", datatoPost)
             .success(function(serverResponse, status) {
@@ -103,6 +103,7 @@ var dataToPost = {  hostname:"127.0.0.1",  port:"9042"}; /* PostData*/
                 $scope.person.name = serverResponse;
 		$scope.getAllKeyspaces();
 		$scope.connect="Disconnect";
+		$scope.showCreateKeyspace=false;
             });
 }
 else
@@ -116,7 +117,8 @@ else
 			$scope.keyspacedata.Table ="";
 			$scope.keyspacedata.metadata = "";
 			$scope.keyspacedata.tabledata = "";
-			$scope.showCreateTable=false;
+			$scope.columnfamilynames="";
+			$scope.showCreateTable="";
 			$scope.showCreateKeyspace=false;
 			$scope.showTable= false;
 		});
@@ -142,8 +144,11 @@ var dataToPost = {keyspacename:$scope.newKeyspace.scehmaName,
             });
 }
 
-$scope.testCreateTable=function(){
-$scope.showCreateTable=!$scope.showCreateTable;
+$scope.testCreateTable=function(keySpaceName){
+	if($scope.showCreateTable==keySpaceName)
+		$scope.showCreateTable = "";
+	else
+		$scope.showCreateTable = keySpaceName;
 }
 
 $scope.testCreateSchema=function(){
@@ -424,7 +429,7 @@ $scope.rowEditAction = function(event,tablename ){
 
 $scope.sendQuery = function() {
 	var dataToPost = {query:$scope.queryString +";"}; /* PostData*/
-	    $http.post("http://localhost:9000/getDataFromCassandra", dataToPost)
+	    $http.post("http://localhost:9000/cqlQuery", dataToPost)
 	            .success(function(serverResponse, status) {
 	                // Updating the $scope postresponse variable to update theview
 	                $scope.answerRows = serverResponse;
