@@ -139,7 +139,8 @@
 						</tr>
 
 						<tr>
-							<div ng-show="keyspacedata.metadata.length">
+							<td>
+							<div ng-show="ShowMetaData && ShowMetaData == keyspacedata.Table">
 								Table MetaData of {{keyspacedata.name}}.{{keyspacedata.Table}}
 								<div>
 									Column Name: <input type="text" ng-model="coulmn.name" name="">
@@ -148,7 +149,7 @@
 									<a href="javascript:void(0);" ng-click="addNewColumn()"><img
 										src="images/add.png" title="Add new column" /></a>
 								</div>
-								<table ng-show="keyspacedata.metadata.length" border="1">
+								<table  border="1">
 									<tr>
 										<th ng-repeat="(header, value) in keyspacedata.metadata[0]">
 											{{header}}</th>
@@ -168,14 +169,15 @@
 									</tr>
 								</table>
 							</div>
+							</td>
 						</tr>
 					</table>
-					<div ng-show="keyspacedata.tabledata.length">
+					<div ng-show="TableDataShow && TableDataShow == keyspacedata.Table ">
 						Table contents of {{keyspacedata.name}}.{{keyspacedata.Table}}
-						<table ng-show="keyspacedata.tabledata.length" border="1">
+						<table  border="1">
 							<tr>
-								<th ng-repeat="(header, value) in keyspacedata.tabledata[0]">
-									{{header}}</th>
+								<th ng-repeat="header in keyspacedata.metadata">
+									{{header.column_name}}</th>
 							</tr>
 							<tr ng-repeat="data in keyspacedata.tabledata"
 								ng-init="rowIndex = $index">
@@ -194,7 +196,7 @@
 										src="images/delete.png" title="Delete" /></a></td>
 							</tr>
 							<tr>
-								<td ng-repeat="(header, value) in keyspacedata.tabledata[0]">
+								<td ng-repeat="header in keyspacedata.metadata">
 									<input ng-model="rowValue[$index]">
 								</td>
 								<td><a href="javascript:void(0);"

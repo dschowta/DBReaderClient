@@ -39,6 +39,8 @@ $scope.getAllKeyspaces = function() {
 	$scope.keyspacedata.name = "";
 	$scope.keyspacedata.Table ="";
 	$scope.keyspacedata.metadata = "";
+	$scope.ShowMetaData = "";
+	$scope.TableDataShow = "";
 	$scope.keyspacedata.tabledata = "";
 	$scope.columnfamilynames="";
 	$scope.showTable= false;
@@ -117,6 +119,8 @@ else
 			$scope.keyspacedata.name = "";
 			$scope.keyspacedata.Table ="";
 			$scope.keyspacedata.metadata = "";
+			$scope.ShowMetaData = "";
+			$scope.TableDataShow = "";
 			$scope.keyspacedata.tabledata = "";
 			$scope.columnfamilynames="";
 			$scope.showCreateTable="";
@@ -161,6 +165,8 @@ $scope.getKeyspaceSchema = function(keySpace) {
 	$scope.keyspacedata.name = keySpace;
 	$scope.keyspacedata.Table ="";
 	$scope.keyspacedata.metadata = "";
+	$scope.ShowMetaData = "";
+	$scope.TableDataShow = "";
 	$scope.keyspacedata.tabledata = "";
 	$scope.showTable= true;
     $http.get("http://localhost:9000/keyspace/"+keySpace+"/table")
@@ -182,28 +188,39 @@ $scope.deleteKeyspace = function(DropKeyspace) {
 
 $scope.tableMetaData = function(tablename) {
 	$scope.keyspacedata.Table = tablename;
+	$scope.ShowMetaData = tablename;
+	$scope.TableDataShow = "";
 	$scope.keyspacedata.metadata = "";
 	$scope.keyspacedata.tabledata = "";
     $http.get("http://127.0.0.1:9000/keyspace/"+$scope.keyspacedata.name+"/table/" + tablename)
             .success(function(serverResponse, status) {
                 // Updating the $scope postresponse variable to update theview
+            	
                 $scope.keyspacedata.metadata = serverResponse;
             });
 }
 
 $scope.getTableData = function(tablename) {
 	$scope.keyspacedata.Table = tablename;
+	
 	$scope.keyspacedata.tabledata = "";
 	$scope.keyspacedata.metadata = "";
+	/*We need metadata for editing table. but hide it*/
+	$scope.tableMetaData(tablename);//get metadata
+	$scope.ShowMetaData = "";//hide metadata
+	
+	$scope.TableDataShow = tablename;
+	
 	$scope.query ="http://127.0.0.1:9000/keyspace/"+$scope.keyspacedata.name+"/table/" + tablename+"/row";
     $http.get("http://127.0.0.1:9000/keyspace/"+$scope.keyspacedata.name+"/table/" + tablename+"/row")
             .success(function(serverResponse, status) {
                 // Updating the $scope postresponse variable to update theview
 		$scope.temp=serverResponse;
                 $scope.keyspacedata.tabledata = serverResponse;
-            });
+                
+           });
     
-    $scope.tableMetaData(tablename);
+    
 }
 
 $scope.dropTable = function(index,tablename) {
