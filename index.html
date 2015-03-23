@@ -2,12 +2,12 @@
 <html ng-app="myApp">
 <head>
 <script
-	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+	src="js/angular.min.js"></script>
 <script src="js/main.js"></script>
 <script type="text/javascript"
-	src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+	src="js/jquery.min.js"></script>
 <script type="text/javascript"
-	src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+	src="js/jquery-ui.min.js"></script>
 <link rel="stylesheet" type="text/css" href="css/styleTab.css">
 </head>
 <body>
@@ -143,13 +143,7 @@
 							<td>
 							<div ng-show="ShowMetaData && ShowMetaData == keyspacedata.Table">
 								Table MetaData of {{keyspacedata.name}}.{{keyspacedata.Table}}
-								<div>
-									Column Name: <input type="text" ng-model="coulmn.name" name="">
-									Data Type: <select ng-model="coulmn.datatype"
-										ng-options="data.name as data.name for data in dataType"></select>
-									<a href="javascript:void(0);" ng-click="addNewColumn()"><img
-										src="images/add.png" title="Add new column" /></a>
-								</div>
+
 								<table  border="1">
 									<tr>
 										<th ng-repeat="(header, value) in keyspacedata.metadata[0]">
@@ -169,6 +163,13 @@
 												src="images/edit.png" title="edit column" /></a></td>
 									</tr>
 								</table>
+								<div>
+									Column Name to add: <input type="text" ng-model="coulmn.name" name="">
+									Data Type: <select ng-model="coulmn.datatype"
+										ng-options="data.name as data.name for data in dataType"></select>
+									<a href="javascript:void(0);" ng-click="addNewColumn()"><img
+										src="images/add.png" title="Add new column" /></a>
+								</div>
 							</div>
 							</td>
 						</tr>
