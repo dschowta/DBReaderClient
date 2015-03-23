@@ -26,7 +26,7 @@
 					{{person.name}} {{error}}
 					<form ng-submit="connectToDB()">
 						<div ng-show="connect=='Connect'">
-						<input  size="3" type="number" ng-model="IP.first" min="0" max="255" ng-init="IP.first=127">.<input  size="3" type="number" ng-model="IP.two" min="0" max="255" ng-init="IP.two=0">.<input  size="3" type="number" ng-model="IP.three" min="0" max="255" ng-init="IP.three=0">.<input  size="3" type="number" ng-model="IP.four" min="0" max="255" ng-init="IP.four=1"><br></div>
+						<input  size="3" type="number" ng-model="IP.first" min="0" max="255" ng-init="IP.first=127">.<input  size="3" type="number" ng-model="IP.two" min="0" max="255" ng-init="IP.two=0">.<input  size="3" type="number" ng-model="IP.three" min="0" max="255" ng-init="IP.three=0">.<input  size="3" type="number" ng-model="IP.four" min="0" max="255" ng-init="IP.four=1">Port:<input  size="5" type="number" ng-model="servPortNum" min="0" max="62265" ng-init="servPortNum=9042"><br> </div>
 						<button type="submit"  >{{connect}}</button>
 					</form>
 					<form ng-submit="createSchema()" ng-show="showCreateKeyspace">

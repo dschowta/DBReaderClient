@@ -98,7 +98,7 @@ $scope.editColumn=function(columnname,datatype){
 }
 $scope.connectToDB = function() {
 if($scope.connect=="Connect"){
-var dataToPost = {  hostname:"127.0.0.1",  port:"9042"}; /* PostData*/
+var dataToPost = {  hostname:$scope.IP.first+"."+$scope.IP.two+"."+$scope.IP.three+"."+$scope.IP.four,  port:$scope.servPortNum}; /* PostData*/
     //var queryParams = {params: {op: 'saveEmployee'}};/* Query Parameters*/
     $http.post("http://localhost:9000/connection", dataToPost)
             .success(function(serverResponse, status) {
