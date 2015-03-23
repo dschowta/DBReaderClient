@@ -185,7 +185,7 @@
 								ng-init="rowIndex = $index">
 								<td ng-repeat="(key, val) in data">
 									<div ng-show="!rowEditVisible(rowIndex,$index)"
-										ng-click="showRowEdit(val,rowIndex,$index)">{{val}}</div> <input
+										ng-click="showRowEdit(val,rowIndex,$index)">{{val?val:"null"}}</div> <input
 									ng-model="rowEditValue"
 									ng-show="rowEditVisible(rowIndex,$index)"><br>
 									<button ng-show="rowEditVisible(rowIndex,$index)"
