@@ -51,6 +51,9 @@ $scope.getAllKeyspaces = function() {
             });
 }
 $scope.createTable=function(newTableName){
+	/*Initialize column and primary key tables*/
+	$scope.columnsname = [];
+	$scope.primarykeys = [];
 angular.forEach($scope.choices,function(value,index){
                 $scope.columnsname.push({'name':value.name,'type':value.datatype});
 		if(value.isPrimary == true)
