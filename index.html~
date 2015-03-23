@@ -16,17 +16,18 @@
 	<div ng-controller="MyController">
 		<div class="ui-tabs">
 			<ul class="ui-tabs-nav">
-				<li><a href="#tabs-1">Tab One</a></li>
+				<li><a href="#tabs-1">Home</a></li>
 				<li ng-show="connect=='Disconnect'"><a href="#tabs-2">CQL</a></li>
-				<li ng-show="connect=='Disconnect'"><a href="#tabs-3">Tab
-						Three</a></li>
+				<li ng-show="connect=='Disconnect'"><a href="#tabs-3">About Us</a></li>
 			</ul>
 
 			<div id="tabs-1" class="ui-tabs-panel">
 				<div>
 					{{person.name}} {{error}}
 					<form ng-submit="connectToDB()">
-						<button type="submit">{{connect}}</button>
+						<div ng-show="connect=='Connect'">
+						<input  size="3" type="number" ng-model="IP.first" min="0" max="255" ng-init="IP.first=127">.<input  size="3" type="number" ng-model="IP.two" min="0" max="255" ng-init="IP.two=0">.<input  size="3" type="number" ng-model="IP.three" min="0" max="255" ng-init="IP.three=0">.<input  size="3" type="number" ng-model="IP.four" min="0" max="255" ng-init="IP.four=1"><br></div>
+						<button type="submit"  >{{connect}}</button>
 					</form>
 					<form ng-submit="createSchema()" ng-show="showCreateKeyspace">
 						<table>
@@ -66,7 +67,7 @@
 											title="Add Keyspace" /></td>
 								</tr>
 
-								<tr ng-repeat="keyspace in keyspaces">
+								<tr ng-repeat="keyspace in keyspaces" ng-show="keyspace.keyspace_name!='system' && keyspace.keyspace_name!='system_traces'" >
 									<td valign="top"><a href="javascript:void(0);"
 										ng-click="getKeyspaceSchema(keyspace.keyspace_name);">{{keyspace.keyspace_name}}</a>
 									  	</td><td valign="top"><a href="javascript:void(0);"
@@ -139,7 +140,8 @@
 						</tr>
 
 						<tr>
-							<div ng-show="keyspacedata.metadata.length">
+							<td>
+							<div ng-show="ShowMetaData && ShowMetaData == keyspacedata.Table">
 								Table MetaData of {{keyspacedata.name}}.{{keyspacedata.Table}}
 								<div>
 									Column Name: <input type="text" ng-model="coulmn.name" name="">
@@ -148,7 +150,7 @@
 									<a href="javascript:void(0);" ng-click="addNewColumn()"><img
 										src="images/add.png" title="Add new column" /></a>
 								</div>
-								<table ng-show="keyspacedata.metadata.length" border="1">
+								<table  border="1">
 									<tr>
 										<th ng-repeat="(header, value) in keyspacedata.metadata[0]">
 											{{header}}</th>
@@ -168,14 +170,15 @@
 									</tr>
 								</table>
 							</div>
+							</td>
 						</tr>
 					</table>
-					<div ng-show="keyspacedata.tabledata.length">
+					<div ng-show="TableDataShow && TableDataShow == keyspacedata.Table ">
 						Table contents of {{keyspacedata.name}}.{{keyspacedata.Table}}
-						<table ng-show="keyspacedata.tabledata.length" border="1">
+						<table  border="1">
 							<tr>
-								<th ng-repeat="(header, value) in keyspacedata.tabledata[0]">
-									{{header}}</th>
+								<th ng-repeat="header in keyspacedata.metadata">
+									{{header.column_name}}</th>
 							</tr>
 							<tr ng-repeat="data in keyspacedata.tabledata"
 								ng-init="rowIndex = $index">
@@ -194,7 +197,7 @@
 										src="images/delete.png" title="Delete" /></a></td>
 							</tr>
 							<tr>
-								<td ng-repeat="(header, value) in keyspacedata.tabledata[0]">
+								<td ng-repeat="header in keyspacedata.metadata">
 									<input ng-model="rowValue[$index]">
 								</td>
 								<td><a href="javascript:void(0);"
@@ -209,7 +212,8 @@
 
 			<div id="tabs-2" class="ui-tabs-panel">
 				<form ng-submit="sendQuery()">
-					Enter a Query:<br> <input ng-model="queryString"> <br>
+					Enter a Query:<br> 
+					<textarea ng-model="queryString" class="CQLbox" cols="100" rows="10"> </textarea><br>
 					<button type="submit">Submit Query</button>
 					<br>
 					<table ng-show="answerRows.length" border="1">
@@ -224,7 +228,11 @@
 
 			</div>
 			<div id="tabs-3" class="ui-tabs-panel">
-				<p>Content three.</p>
+				<ui>Group Members:
+					<li>Neha Neha</li>
+					<li>Vinay HB<li>
+					<li>Shreekantha Devasya</li>
+				</ui>
 
 			</div>
 		</div>

@@ -7,7 +7,7 @@ app.config(function($httpProvider){
 });
 app.controller('MyController',['$scope','$http', function($scope,$http) {
   $scope.person = {
-    name: "Try It"
+    name: "Connect to Cassandra"
   };
   $scope.queryString = "";
   $scope.rowValue = [];
